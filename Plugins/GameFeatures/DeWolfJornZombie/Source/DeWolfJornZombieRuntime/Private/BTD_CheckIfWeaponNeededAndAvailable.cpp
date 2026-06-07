@@ -1,4 +1,6 @@
 ﻿#include "BTD_CheckIfWeaponNeededAndAvailable.h"
+
+#include "AIController.h"
 #include "GameAI_Zombie/Survivor/SurvivorPawn.h"
 #include "StudentPerceptorDeWolfJorn.h"
 
@@ -32,6 +34,8 @@ bool UBTD_CheckIfWeaponNeededAndAvailable::CalculateRawConditionValue(UBehaviorT
 	float closestDistance = 9999999.f;
 	for (AActor* weapon : weapons)
 	{
+		if (!weapon) continue;
+		
 		float distance = FVector::Dist(weapon->GetActorLocation(), MyPawn->GetActorLocation());
 		if (distance < closestDistance)
 		{
@@ -39,7 +43,8 @@ bool UBTD_CheckIfWeaponNeededAndAvailable::CalculateRawConditionValue(UBehaviorT
 			closestDistance = distance;
 		}
 	}
-	
+	if (closestWeapon == nullptr)
+		return false;
 	OwnerComp.GetBlackboardComponent()->SetValueAsObject("ItemTarget", closestWeapon);
 	
 	return true;

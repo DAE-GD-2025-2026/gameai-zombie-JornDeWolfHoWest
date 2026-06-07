@@ -4,17 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Perception/AIPerceptionComponent.h"
-#include "Perception/AISenseConfig_Sight.h"
-#include "Perception/AISenseConfig_Damage.h"
-#include "Perception/AISense_Damage.h"
 #include "GameAI_Zombie/Survivor/SurvivorPawn.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
-#include "BehaviorTree/BehaviorTree.h"
-#include "BehaviorTree/BlackboardData.h"
-#include "AIController.h"
-#include "Common/InventoryComponent.h"
 
 #include "StudentPerceptorDeWolfJorn.generated.h"
 
@@ -24,14 +16,6 @@ enum class EInventorySlot : uint8
 	WeaponSlot = 0,
 	MedkitSlot = 1,
 	FoodSlot = 2
-};
-
-UENUM()
-enum class ESurvivorState : uint8
-{
-	Explore,
-	Loot,
-	Flee
 };
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -51,12 +35,13 @@ public:
 
 	UFUNCTION()
 	virtual void OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
-	void ShootGun();
-	void RemoveZombie(AActor* Actor);
-
 private:
 	UPROPERTY()
+	UHealthComponent* Health;
+	UPROPERTY()
 	UInventoryComponent* Inventory;
+	UPROPERTY()
+	UStaminaComponent* Stamina;
 	UBlackboardComponent* BB;
 	ASurvivorPawn* SurvivorPawn;
 
@@ -70,33 +55,60 @@ private:
 	
 	UPROPERTY()
 	TArray<AActor*> SeenWeapons;
-
 	UPROPERTY()
-	TArray<AActor*> VisibleItems;
+	TArray<AActor*> SeenFood;
+	UPROPERTY()
+	TArray<AActor*> SeenMedkits;
 
-	ESurvivorState CurrentState = ESurvivorState::Explore;
 
 	
 	
 public:
+	void PickupItem(AActor* Actor);
+	
+	
 	const TArray<AActor*>& GetVisibleZombies() const
 	{
 		return VisibleZombies;
 	}
-
+	void ShootGun();
+	void RemoveZombie(AActor* Actor);
+	
 	const TArray<AActor*>& GetVisibleHouses() const
 	{
 		return VisibleHouses;
 	}
+	void MarkHouseAsSeen();
+	void GetNextHouseToCheck();
 	
 	const TArray<AActor*>& GetSeenWeapons() const
 	{
 		return SeenWeapons;
 	}
-	
-	void MarkHouseAsSeen();
-	void GetNextHouseToCheck();
 	bool HasWeapon();
+	
+	const TArray<AActor*>& GetSeenFood() const
+	{
+		return SeenFood;
+	}
+	int GetCurrentFoodValue();
+	bool HasFood();
+	void Eat();
+	
+	const TArray<AActor*>& GetSeenMedkit() const
+	{
+		return SeenMedkits;
+	}
+	int GetCurrentMedkitHealingValue();
+	bool HasMedkit();
+	void Heal();
 
-	void PickupItem(AActor* Actor);
+	const UHealthComponent* GetHealthComponent() const
+	{
+		return Health;
+	}
+	const UStaminaComponent* GetStaminaComponent() const	
+	{
+		return Stamina;
+	}
 };

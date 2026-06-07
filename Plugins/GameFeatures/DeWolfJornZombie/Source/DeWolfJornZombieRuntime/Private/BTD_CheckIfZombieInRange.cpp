@@ -25,9 +25,10 @@ bool UBTD_CheckIfZombieInRange::CalculateRawConditionValue(
 	}
 
 	const FVector MyLocation = MyPawn->GetActorLocation();
-
 	for (AActor* Zombie : Perceptor->GetVisibleZombies())
 	{
+		if (!Zombie) continue;
+		
 		const float Dist =
 			FVector::Dist(
 				MyLocation,
@@ -35,9 +36,11 @@ bool UBTD_CheckIfZombieInRange::CalculateRawConditionValue(
 
 		if (Dist <= Range)
 		{
+			MyPawn->StartRunning();
 			return true;
 		}
 	}
 
+	MyPawn->StopRunning();
 	return false;
 }

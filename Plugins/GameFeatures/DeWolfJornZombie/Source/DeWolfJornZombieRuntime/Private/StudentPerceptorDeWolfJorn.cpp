@@ -3,6 +3,7 @@
 
 #include "StudentPerceptorDeWolfJorn.h"
 
+#include "AIController.h"
 #include "Common/InventoryComponent.h"
 #include "GameAI_Zombie/Zombies/BaseZombie.h"
 #include "GameAI_Zombie/Village/House/House.h"
@@ -83,12 +84,31 @@ void UStudentPerceptorDeWolfJorn::OnPerceptionUpdated(AActor* Actor, FAIStimulus
 		}
 		return;
 	}
-	// If weapon
-	if (auto weapon = Cast<AWeapon>(Actor))
+	// If Item
+	if (auto item = Cast<ABaseItem>(Actor))
 	{
-		if (!SeenWeapons.Contains(weapon))
-		{
-			SeenWeapons.Add(weapon);
+		switch (item->GetItemType()) {
+		case EItemType::Food:
+			if (!SeenFood.Contains(item))
+			{
+				SeenFood.Add(item);
+			}
+			break;
+		case EItemType::Medkit:
+			if (!SeenMedkits.Contains(item))
+			{
+				SeenMedkits.Add(item);
+			}
+			break;
+		case EItemType::Shotgun:
+		case EItemType::Pistol:
+			if (!SeenWeapons.Contains(item))
+			{
+				SeenWeapons.Add(item);
+			}
+			break;
+		case EItemType::Garbage:
+			break;
 		}
 	}
 }
@@ -99,7 +119,7 @@ void UStudentPerceptorDeWolfJorn::ShootGun()
 
 	ABaseItem* item = Inventory->GetInventory()[static_cast<int>(EInventorySlot::WeaponSlot)];
 
-	if (item->GetValue() == 0)
+	if (item->GetValue() <= 0)
 	{
 		Inventory->RemoveItem(static_cast<int>(EInventorySlot::WeaponSlot));
 	}
@@ -150,6 +170,50 @@ void UStudentPerceptorDeWolfJorn::GetNextHouseToCheck()
 bool UStudentPerceptorDeWolfJorn::HasWeapon()
 {
 	return Inventory->GetInventory()[static_cast<int>(EInventorySlot::WeaponSlot)] != nullptr;
+}
+
+int UStudentPerceptorDeWolfJorn::GetCurrentFoodValue()
+{
+	return Inventory->GetInventory()[static_cast<int>(EInventorySlot::FoodSlot)]->GetValue();
+}
+
+bool UStudentPerceptorDeWolfJorn::HasFood()
+{
+	return Inventory->GetInventory()[static_cast<int>(EInventorySlot::FoodSlot)] != nullptr;
+}
+
+void UStudentPerceptorDeWolfJorn::Eat()
+{
+	Inventory->UseItem(static_cast<int>(EInventorySlot::FoodSlot));
+
+	ABaseItem* item = Inventory->GetInventory()[static_cast<int>(EInventorySlot::FoodSlot)];
+
+	if (item->GetValue() <= 0)
+	{
+		Inventory->RemoveItem(static_cast<int>(EInventorySlot::FoodSlot));
+	}
+}
+
+int UStudentPerceptorDeWolfJorn::GetCurrentMedkitHealingValue()
+{
+	return Inventory->GetInventory()[static_cast<int>(EInventorySlot::MedkitSlot)]->GetValue();
+}
+
+bool UStudentPerceptorDeWolfJorn::HasMedkit()
+{
+	return Inventory->GetInventory()[static_cast<int>(EInventorySlot::MedkitSlot)] != nullptr;
+}
+
+void UStudentPerceptorDeWolfJorn::Heal()
+{
+	Inventory->UseItem(static_cast<int>(EInventorySlot::MedkitSlot));
+
+	ABaseItem* item = Inventory->GetInventory()[static_cast<int>(EInventorySlot::MedkitSlot)];
+
+	if (item->GetValue() <= 0)
+	{
+		Inventory->RemoveItem(static_cast<int>(EInventorySlot::MedkitSlot));
+	}
 }
 
 void UStudentPerceptorDeWolfJorn::PickupItem(AActor* Actor)

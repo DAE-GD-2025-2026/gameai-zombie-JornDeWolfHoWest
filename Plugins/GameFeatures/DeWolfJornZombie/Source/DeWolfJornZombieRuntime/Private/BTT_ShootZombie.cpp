@@ -21,6 +21,8 @@ inline EBTNodeResult::Type UBTT_ShootZombie::ExecuteTask(UBehaviorTreeComponent&
 	float closestZombieRange = 999999999.f;
 	for (auto zombie : perceptor->GetVisibleZombies())
 	{
+		if (!zombie) continue;
+		
 		float distance = FVector::Dist(myLocation, zombie->GetActorLocation());
 		if (distance < closestZombieRange)
 		{

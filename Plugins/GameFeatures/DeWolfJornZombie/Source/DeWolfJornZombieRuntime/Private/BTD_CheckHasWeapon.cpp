@@ -1,4 +1,6 @@
 ﻿#include "BTD_CheckHasWeapon.h"
+
+#include "AIController.h"
 #include "GameAI_Zombie/Survivor/SurvivorPawn.h"
 #include "StudentPerceptorDeWolfJorn.h"
 

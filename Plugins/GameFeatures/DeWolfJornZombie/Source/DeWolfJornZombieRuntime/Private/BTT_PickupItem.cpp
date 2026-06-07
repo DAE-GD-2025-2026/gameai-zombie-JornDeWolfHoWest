@@ -3,6 +3,7 @@
 #include "AIController.h"
 #include "StudentPerceptorDeWolfJorn.h"
 #include "Survivor/SurvivorPawn.h"
+#include "Items/BaseItem.h"
 
 inline EBTNodeResult::Type UBTT_PickupItem::ExecuteTask(UBehaviorTreeComponent& root, uint8* nodeMemory)
 {
