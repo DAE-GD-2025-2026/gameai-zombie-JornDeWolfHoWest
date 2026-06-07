@@ -1,4 +1,4 @@
-﻿#include "BTT_SetTargetAwayFromZombie.h"
+﻿#include "BTT_SetTargetAwayFromZombieDeWolfJorn.h"
 
 #include "AIController.h"
 #include "EditorReimportHandler.h"
@@ -7,7 +7,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 
 
-EBTNodeResult::Type UBTT_SetTargetAwayFromZombie::ExecuteTask(UBehaviorTreeComponent& root, uint8* nodeMemory)
+EBTNodeResult::Type UBTT_SetTargetAwayFromZombieDeWolfJorn::ExecuteTask(UBehaviorTreeComponent& root, uint8* nodeMemory)
 {
 	ASurvivorPawn* myPawn = Cast<ASurvivorPawn>(root.GetAIOwner()->GetPawn());
 	if (!myPawn) return EBTNodeResult::Failed;

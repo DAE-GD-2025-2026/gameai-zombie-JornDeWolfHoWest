@@ -1,10 +1,10 @@
-﻿#include "BTD_NeedsFood.h"
+﻿#include "BTD_NeedsMedkitDeWolfJorn.h"
 
 #include "AIController.h"
 #include "GameAI_Zombie/Survivor/SurvivorPawn.h"
 #include "StudentPerceptorDeWolfJorn.h"
 
-bool UBTD_NeedsFood::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
+bool UBTD_NeedsMedkitDeWolfJorn::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
 	ASurvivorPawn* MyPawn =
 		Cast<ASurvivorPawn>(OwnerComp.GetAIOwner()->GetPawn());
@@ -22,29 +22,29 @@ bool UBTD_NeedsFood::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerCom
 		return false;
 	}
 	// Check for any food needed in our inv
-	if (Perceptor->HasFood())
+	if (Perceptor->HasMedkit())
 		return false;
 	
 	// Check if any on the map
-	auto foodList = Perceptor->GetSeenFood();
-	if (foodList.IsEmpty())
+	auto medkitList = Perceptor->GetSeenMedkit();
+	if (medkitList.IsEmpty())
 		return false;
 
-	AActor* closestFood = nullptr;
+	AActor* closestMedkit = nullptr;
 	float closestDistance = 9999999.f;
-	for (AActor* food : foodList)
+	for (AActor* medkit : medkitList)
 	{
-		if (!food) continue;
+		if (!medkit) continue;
 		
-		float distance = FVector::Dist(food->GetActorLocation(), MyPawn->GetActorLocation());
+		float distance = FVector::Dist(medkit->GetActorLocation(), MyPawn->GetActorLocation());
 		if (distance < closestDistance)
 		{
-			closestFood = food;
+			closestMedkit = medkit;
 			closestDistance = distance;
 		}
 	}
 	
-	OwnerComp.GetBlackboardComponent()->SetValueAsObject("ItemTarget", closestFood);
+	OwnerComp.GetBlackboardComponent()->SetValueAsObject("ItemTarget", closestMedkit);
 	
 	return true;
 }

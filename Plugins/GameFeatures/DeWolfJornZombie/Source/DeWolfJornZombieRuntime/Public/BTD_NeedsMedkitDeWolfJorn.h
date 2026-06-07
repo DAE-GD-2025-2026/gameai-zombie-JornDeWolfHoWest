@@ -1,10 +1,9 @@
 ﻿#pragma once
-
 #include "BehaviorTree/BTDecorator.h"
-#include "BTD_ShouldEat.generated.h"
+#include "BTD_NeedsMedkitDeWolfJorn.generated.h"
 
 UCLASS()
-class DEWOLFJORNZOMBIERUNTIME_API UBTD_ShouldEat : public UBTDecorator
+class DEWOLFJORNZOMBIERUNTIME_API UBTD_NeedsMedkitDeWolfJorn : public UBTDecorator
 {
 	GENERATED_BODY()
 protected:

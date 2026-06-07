@@ -1,11 +1,11 @@
-﻿#include "BTT_ShootZombie.h"
+﻿#include "BTT_ShootZombieDeWolfJorn.h"
 
 #include "AIController.h"
 #include "HLSLMathAliases.h"
 #include "StudentPerceptorDeWolfJorn.h"
 #include "Survivor/SurvivorPawn.h"
 
-inline EBTNodeResult::Type UBTT_ShootZombie::ExecuteTask(UBehaviorTreeComponent& root, uint8* nodeMemory)
+inline EBTNodeResult::Type UBTT_ShootZombieDeWolfJorn::ExecuteTask(UBehaviorTreeComponent& root, uint8* nodeMemory)
 {
 	ASurvivorPawn* myPawn = Cast<ASurvivorPawn>(root.GetAIOwner()->GetPawn());
 	if (!myPawn) return EBTNodeResult::Failed;

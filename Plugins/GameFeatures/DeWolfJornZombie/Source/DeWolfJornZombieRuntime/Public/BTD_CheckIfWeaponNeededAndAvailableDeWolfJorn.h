@@ -2,10 +2,10 @@
 
 
 #include "BehaviorTree/BTDecorator.h"
-#include "BTD_CheckIfWeaponNeededAndAvailable.generated.h"
+#include "BTD_CheckIfWeaponNeededAndAvailableDeWolfJorn.generated.h"
 
 UCLASS()
-class DEWOLFJORNZOMBIERUNTIME_API UBTD_CheckIfWeaponNeededAndAvailable : public UBTDecorator
+class DEWOLFJORNZOMBIERUNTIME_API UBTD_CheckIfWeaponNeededAndAvailableDeWolfJorn : public UBTDecorator
 {
 	GENERATED_BODY()
 

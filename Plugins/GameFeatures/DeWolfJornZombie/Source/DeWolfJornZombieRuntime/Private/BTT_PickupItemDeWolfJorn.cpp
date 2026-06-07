@@ -1,11 +1,11 @@
-﻿#include "BTT_PickupItem.h"
+﻿#include "BTT_PickupItemDeWolfJorn.h"
 
 #include "AIController.h"
 #include "StudentPerceptorDeWolfJorn.h"
 #include "Survivor/SurvivorPawn.h"
 #include "Items/BaseItem.h"
 
-inline EBTNodeResult::Type UBTT_PickupItem::ExecuteTask(UBehaviorTreeComponent& root, uint8* nodeMemory)
+inline EBTNodeResult::Type UBTT_PickupItemDeWolfJorn::ExecuteTask(UBehaviorTreeComponent& root, uint8* nodeMemory)
 {
 	ASurvivorPawn* myPawn = Cast<ASurvivorPawn>(root.GetAIOwner()->GetPawn());
 	if (!myPawn) return EBTNodeResult::Failed;

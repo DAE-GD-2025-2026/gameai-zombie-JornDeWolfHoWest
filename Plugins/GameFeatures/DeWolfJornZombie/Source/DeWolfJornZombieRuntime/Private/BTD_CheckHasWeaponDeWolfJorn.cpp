@@ -1,10 +1,10 @@
-﻿#include "BTD_CheckHasWeapon.h"
+﻿#include "BTD_CheckHasWeaponDeWolfJorn.h"
 
 #include "AIController.h"
 #include "GameAI_Zombie/Survivor/SurvivorPawn.h"
 #include "StudentPerceptorDeWolfJorn.h"
 
-bool UBTD_CheckHasWeapon::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
+bool UBTD_CheckHasWeaponDeWolfJorn::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
 	ASurvivorPawn* MyPawn =
 		Cast<ASurvivorPawn>(OwnerComp.GetAIOwner()->GetPawn());

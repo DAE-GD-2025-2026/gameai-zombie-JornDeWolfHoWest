@@ -1,10 +1,10 @@
 ﻿#pragma once
 
 #include "BehaviorTree/BTDecorator.h"
-#include "BTD_CheckIfZombieInRange.generated.h"
+#include "BTD_CheckIfZombieInRangeDeWolfJorn.generated.h"
 
 UCLASS()
-class DEWOLFJORNZOMBIERUNTIME_API UBTD_CheckIfZombieInRange : public UBTDecorator
+class DEWOLFJORNZOMBIERUNTIME_API UBTD_CheckIfZombieInRangeDeWolfJorn : public UBTDecorator
 {
 	GENERATED_BODY()
 

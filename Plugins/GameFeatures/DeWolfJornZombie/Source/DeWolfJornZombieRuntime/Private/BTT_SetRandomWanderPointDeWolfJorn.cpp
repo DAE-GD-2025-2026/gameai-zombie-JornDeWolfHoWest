@@ -1,10 +1,10 @@
-﻿#include "BTT_SetRandomWanderPoint.h"
+﻿#include "BTT_SetRandomWanderPointDeWolfJorn.h"
 
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 
-EBTNodeResult::Type UBTT_SetRandomWanderPoint::ExecuteTask(UBehaviorTreeComponent& root, uint8* nodeMemory)
+EBTNodeResult::Type UBTT_SetRandomWanderPointDeWolfJorn::ExecuteTask(UBehaviorTreeComponent& root, uint8* nodeMemory)
 {
 	UBlackboardComponent* BlackboardComponent = root.GetBlackboardComponent();
 	if (!BlackboardComponent) return EBTNodeResult::Failed;

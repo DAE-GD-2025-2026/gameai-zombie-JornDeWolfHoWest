@@ -49,6 +49,8 @@ void UStudentPerceptorDeWolfJorn::BeginPlay()
 
 
 	Inventory = SurvivorPawn->GetComponentByClass<UInventoryComponent>();
+	Health = SurvivorPawn->GetComponentByClass<UHealthComponent>();
+	Stamina = SurvivorPawn->GetComponentByClass<UStaminaComponent>();
 }
 
 void UStudentPerceptorDeWolfJorn::TickComponent(

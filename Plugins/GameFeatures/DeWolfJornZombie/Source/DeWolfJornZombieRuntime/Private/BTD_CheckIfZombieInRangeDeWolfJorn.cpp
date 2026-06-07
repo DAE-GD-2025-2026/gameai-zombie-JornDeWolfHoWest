@@ -1,10 +1,10 @@
-﻿#include "BTD_CheckIfZombieInRange.h"
+﻿#include "BTD_CheckIfZombieInRangeDeWolfJorn.h"
 
 #include "AIController.h"
 #include "GameAI_Zombie/Survivor/SurvivorPawn.h"
 #include "StudentPerceptorDeWolfJorn.h"
 
-bool UBTD_CheckIfZombieInRange::CalculateRawConditionValue(
+bool UBTD_CheckIfZombieInRangeDeWolfJorn::CalculateRawConditionValue(
 	UBehaviorTreeComponent& OwnerComp,
 	uint8* NodeMemory) const
 {

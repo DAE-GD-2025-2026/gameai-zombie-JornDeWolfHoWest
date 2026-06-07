@@ -1,10 +1,10 @@
 ﻿#pragma once 
 
 #include "BehaviorTree/BTTaskNode.h"
-#include "BTT_SetRandomWanderPoint.generated.h"
+#include "BTT_SetRandomWanderPointDeWolfJorn.generated.h"
 
 UCLASS()
-class DEWOLFJORNZOMBIERUNTIME_API UBTT_SetRandomWanderPoint : public UBTTaskNode
+class DEWOLFJORNZOMBIERUNTIME_API UBTT_SetRandomWanderPointDeWolfJorn : public UBTTaskNode
 {
 	GENERATED_BODY()
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& root, uint8* nodeMemory) override;
