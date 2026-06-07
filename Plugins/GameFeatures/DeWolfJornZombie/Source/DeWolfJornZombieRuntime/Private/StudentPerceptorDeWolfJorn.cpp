@@ -33,6 +33,16 @@ void UStudentPerceptorDeWolfJorn::BeginPlay()
 			this,
 			&UStudentPerceptorDeWolfJorn::OnPerceptionUpdated);
 	}
+	
+	
+	
+	AAIController* AIController =
+		Cast<AAIController>(SurvivorPawn->GetController());
+
+	if (!AIController)
+		return;
+
+	BB = AIController->GetBlackboardComponent();
 }
 
 static AActor* GetClosest(const TArray<AActor*>& List, const FVector& Origin)
@@ -62,53 +72,12 @@ void UStudentPerceptorDeWolfJorn::TickComponent(
 	FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	if (!SurvivorPawn)
-		return;
-
-	AAIController* AIController =
-		Cast<AAIController>(SurvivorPawn->GetController());
-
-	if (!AIController)
-		return;
-
-	UBlackboardComponent* BB = AIController->GetBlackboardComponent();
-
-	if (!BB)
-		return;
-
-	FVector Origin = SurvivorPawn->GetActorLocation();
-
-	// 1. ZOMBIE PRIORITY
-	AActor* Zombie = GetClosest(VisibleZombies, Origin);
-	BB->SetValueAsObject(TEXT("ZombieTarget"), Zombie);
-
-	// 2. ITEM PRIORITY
-	AActor* Item = GetClosest(VisibleItems, Origin);
-	BB->SetValueAsObject(TEXT("ItemTarget"), Item);
-
-	// 3. HOUSE PRIORITY
-	AActor* House = GetClosest(VisibleHouses, Origin);
-	BB->SetValueAsObject(TEXT("HouseTarget"), House);
-
-	// 4. STATE DECISION (simple logic for now)
-	if (Zombie)
-	{
-		BB->SetValueAsName(TEXT("CurrentState"), TEXT("FLEE"));
-	}
-	else if (Item)
-	{
-		BB->SetValueAsName(TEXT("CurrentState"), TEXT("LOOT"));
-	}
-	else
-	{
-		BB->SetValueAsName(TEXT("CurrentState"), TEXT("EXPLORE"));
-	}
 }
 
 
 void UStudentPerceptorDeWolfJorn::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
+	
 	auto name = Actor->GetName();
 	GEngine->AddOnScreenDebugMessage(5, 1.f, FColor::Green, name);
 	
@@ -124,10 +93,55 @@ void UStudentPerceptorDeWolfJorn::OnPerceptionUpdated(AActor* Actor, FAIStimulus
 	// If actor is house, add him to visible houses (to explore later)
 	if (auto house = Cast<AHouse>(Actor))
 	{
-		if (!VisibleHouses.Contains(house))
+		if (!VisibleHouses.Contains(house) and !SeenHouses.Contains(house))
 		{
 			VisibleHouses.Add(house);
+			GetNextHouseToCheck();
 		}
 		return;
 	}
+}
+
+void UStudentPerceptorDeWolfJorn::GetNextHouseToCheck()
+{
+	if (VisibleHouses.Num() <= 0)
+	{
+		BB->SetValueAsObject("HouseTarget", nullptr);
+		return;
+	}
+	
+	// More houses to check!
+	
+	
+	AActor* closestHouse = nullptr;
+	float closestDistance = TNumericLimits<float>::Max();
+
+	const FVector Location = GetOwner()->GetActorLocation();
+
+	for (AActor* House : VisibleHouses)
+	{
+		if (!IsValid(House))
+		{
+			continue;
+		}
+
+		const float DistanceSq =
+			FVector::DistSquared(Location, House->GetActorLocation());
+
+		if (DistanceSq < closestDistance)
+		{
+			closestDistance = DistanceSq;
+			closestHouse = House;
+		}
+	}
+	
+	BB->SetValueAsObject("HouseTarget", closestHouse);
+}
+
+void UStudentPerceptorDeWolfJorn::MarkHouseAsSeen()
+{	
+	AHouse* house = Cast<AHouse>(BB->GetValueAsObject("HouseTarget"));
+	
+	SeenHouses.Add(house);
+	VisibleHouses.Remove(house);
 }

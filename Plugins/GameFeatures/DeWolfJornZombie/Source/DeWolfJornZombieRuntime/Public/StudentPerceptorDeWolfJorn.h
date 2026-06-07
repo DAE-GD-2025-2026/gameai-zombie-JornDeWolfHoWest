@@ -44,6 +44,7 @@ public:
 	virtual void OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 
 private:
+	UBlackboardComponent* BB;
 	ASurvivorPawn* SurvivorPawn;
 
 	UPROPERTY()
@@ -51,12 +52,16 @@ private:
 
 	UPROPERTY()
 	TArray<AActor*> VisibleHouses;
+	UPROPERTY()
+	TArray<AActor*> SeenHouses;
 
 	UPROPERTY()
 	TArray<AActor*> VisibleItems;
 
 	ESurvivorState CurrentState = ESurvivorState::Explore;
 
+	
+	
 public:
 
 	bool HasZombie() const
@@ -83,6 +88,9 @@ public:
 	{
 		return VisibleHouses;
 	}
+	
+	void MarkHouseAsSeen();
+	void GetNextHouseToCheck();
 
 	const TArray<AActor*>& GetVisibleItems() const
 	{
