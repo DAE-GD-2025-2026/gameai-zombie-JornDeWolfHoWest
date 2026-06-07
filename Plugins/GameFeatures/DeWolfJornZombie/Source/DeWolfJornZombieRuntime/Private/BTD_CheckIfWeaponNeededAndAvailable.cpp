@@ -27,8 +27,20 @@ bool UBTD_CheckIfWeaponNeededAndAvailable::CalculateRawConditionValue(UBehaviorT
 	auto weapons = Perceptor->GetSeenWeapons();
 	if (weapons.IsEmpty())
 		return false;
+
+	AActor* closestWeapon = nullptr;
+	float closestDistance = 9999999.f;
+	for (AActor* weapon : weapons)
+	{
+		float distance = FVector::Dist(weapon->GetActorLocation(), MyPawn->GetActorLocation());
+		if (distance < closestDistance)
+		{
+			closestWeapon = weapon;
+			closestDistance = distance;
+		}
+	}
 	
-	OwnerComp.GetBlackboardComponent()->SetValueAsObject("ItemTarget", weapons[0]);
+	OwnerComp.GetBlackboardComponent()->SetValueAsObject("ItemTarget", closestWeapon);
 	
 	return true;
 }
