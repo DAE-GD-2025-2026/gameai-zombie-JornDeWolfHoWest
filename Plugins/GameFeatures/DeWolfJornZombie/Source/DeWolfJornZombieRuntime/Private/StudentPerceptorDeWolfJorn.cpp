@@ -36,9 +36,8 @@ void UStudentPerceptorDeWolfJorn::BeginPlay()
 			this,
 			&UStudentPerceptorDeWolfJorn::OnPerceptionUpdated);
 	}
-	
-	
-	
+
+
 	AAIController* AIController =
 		Cast<AAIController>(SurvivorPawn->GetController());
 
@@ -46,8 +45,8 @@ void UStudentPerceptorDeWolfJorn::BeginPlay()
 		return;
 
 	BB = AIController->GetBlackboardComponent();
-	
-	
+
+
 	Inventory = SurvivorPawn->GetComponentByClass<UInventoryComponent>();
 }
 
@@ -62,10 +61,9 @@ void UStudentPerceptorDeWolfJorn::TickComponent(
 
 void UStudentPerceptorDeWolfJorn::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
-	
 	auto name = Actor->GetName();
 	GEngine->AddOnScreenDebugMessage(5, 1.f, FColor::Green, name);
-	
+
 	// If actor is enemy zombie, add him to visible zombies
 	if (auto enemy = Cast<ABaseZombie>(Actor))
 	{
@@ -95,6 +93,24 @@ void UStudentPerceptorDeWolfJorn::OnPerceptionUpdated(AActor* Actor, FAIStimulus
 	}
 }
 
+void UStudentPerceptorDeWolfJorn::ShootGun()
+{
+	Inventory->UseItem(static_cast<int>(EInventorySlot::WeaponSlot));
+
+	ABaseItem* item = Inventory->GetInventory()[static_cast<int>(EInventorySlot::WeaponSlot)];
+
+	if (item->GetValue() == 0)
+	{
+		Inventory->RemoveItem(static_cast<int>(EInventorySlot::WeaponSlot));
+	}
+}
+
+void UStudentPerceptorDeWolfJorn::RemoveZombie(AActor* Actor)
+{
+	if (VisibleZombies.Contains(Actor))
+		VisibleZombies.Remove(Actor);
+}
+
 void UStudentPerceptorDeWolfJorn::GetNextHouseToCheck()
 {
 	if (VisibleHouses.Num() <= 0)
@@ -102,10 +118,10 @@ void UStudentPerceptorDeWolfJorn::GetNextHouseToCheck()
 		BB->SetValueAsObject("HouseTarget", nullptr);
 		return;
 	}
-	
+
 	// More houses to check!
-	
-	
+
+
 	AActor* closestHouse = nullptr;
 	float closestDistance = TNumericLimits<float>::Max();
 
@@ -127,45 +143,38 @@ void UStudentPerceptorDeWolfJorn::GetNextHouseToCheck()
 			closestHouse = House;
 		}
 	}
-	
+
 	BB->SetValueAsObject("HouseTarget", closestHouse);
 }
 
 bool UStudentPerceptorDeWolfJorn::HasWeapon()
 {
-	auto inventoryItems = Inventory->GetInventory();
-	for (ABaseItem* item : inventoryItems)
-	{
-		if (auto weapon = Cast<AWeapon>(item))
-			return true;
-	}
-	return false;
+	return Inventory->GetInventory()[static_cast<int>(EInventorySlot::WeaponSlot)] != nullptr;
 }
 
 void UStudentPerceptorDeWolfJorn::PickupItem(AActor* Actor)
 {
 	if (!IsValid(Actor)) return;
-	
+
 	auto item = Cast<ABaseItem>(Actor);
 	switch (item->GetItemType())
 	{
 	case EItemType::Food:
 		Inventory->GrabItem(static_cast<int>(EInventorySlot::FoodSlot), item);
 		break;
-		
-		
+
+
 	case EItemType::Medkit:
 		Inventory->GrabItem(static_cast<int>(EInventorySlot::MedkitSlot), item);
 		break;
-		
-		
+
+
 	case EItemType::Shotgun:
 	case EItemType::Pistol:
 		Inventory->GrabItem(static_cast<int>(EInventorySlot::WeaponSlot), item);
 		break;
-		
-		
-		
+
+
 	default:
 	case EItemType::Garbage:
 		// Useless-, why even grab it?
@@ -174,9 +183,9 @@ void UStudentPerceptorDeWolfJorn::PickupItem(AActor* Actor)
 }
 
 void UStudentPerceptorDeWolfJorn::MarkHouseAsSeen()
-{	
+{
 	AHouse* house = Cast<AHouse>(BB->GetValueAsObject("HouseTarget"));
-	
+
 	SeenHouses.Add(house);
 	VisibleHouses.Remove(house);
 }

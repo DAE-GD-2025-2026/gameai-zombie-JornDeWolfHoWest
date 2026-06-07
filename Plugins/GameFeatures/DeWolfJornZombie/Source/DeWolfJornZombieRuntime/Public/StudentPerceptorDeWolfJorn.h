@@ -51,6 +51,8 @@ public:
 
 	UFUNCTION()
 	virtual void OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
+	void ShootGun();
+	void RemoveZombie(AActor* Actor);
 
 private:
 	UPROPERTY()
