@@ -14,8 +14,17 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "AIController.h"
+#include "Common/InventoryComponent.h"
 
 #include "StudentPerceptorDeWolfJorn.generated.h"
+
+UENUM()
+enum class EInventorySlot : uint8
+{
+	WeaponSlot = 0,
+	MedkitSlot = 1,
+	FoodSlot = 2
+};
 
 UENUM()
 enum class ESurvivorState : uint8
@@ -44,6 +53,8 @@ public:
 	virtual void OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 
 private:
+	UPROPERTY()
+	UInventoryComponent* Inventory;
 	UBlackboardComponent* BB;
 	ASurvivorPawn* SurvivorPawn;
 
@@ -54,6 +65,9 @@ private:
 	TArray<AActor*> VisibleHouses;
 	UPROPERTY()
 	TArray<AActor*> SeenHouses;
+	
+	UPROPERTY()
+	TArray<AActor*> SeenWeapons;
 
 	UPROPERTY()
 	TArray<AActor*> VisibleItems;
@@ -63,22 +77,6 @@ private:
 	
 	
 public:
-
-	bool HasZombie() const
-	{
-		return VisibleZombies.Num() > 0;
-	}
-
-	bool HasHouse() const
-	{
-		return VisibleHouses.Num() > 0;
-	}
-
-	bool HasItem() const
-	{
-		return VisibleItems.Num() > 0;
-	}
-
 	const TArray<AActor*>& GetVisibleZombies() const
 	{
 		return VisibleZombies;
@@ -89,11 +87,14 @@ public:
 		return VisibleHouses;
 	}
 	
+	const TArray<AActor*>& GetSeenWeapons() const
+	{
+		return SeenWeapons;
+	}
+	
 	void MarkHouseAsSeen();
 	void GetNextHouseToCheck();
+	bool HasWeapon();
 
-	const TArray<AActor*>& GetVisibleItems() const
-	{
-		return VisibleItems;
-	}
+	void PickupItem(AActor* Actor);
 };

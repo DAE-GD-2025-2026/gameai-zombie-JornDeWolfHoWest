@@ -2,6 +2,8 @@
 
 
 #include "StudentPerceptorDeWolfJorn.h"
+
+#include "Common/InventoryComponent.h"
 #include "GameAI_Zombie/Zombies/BaseZombie.h"
 #include "GameAI_Zombie/Village/House/House.h"
 #include "GameAI_Zombie/Items/BaseItem.h"
@@ -11,6 +13,7 @@
 #include "GameAI_Zombie/Items/ItemType.h"
 #include "GameAI_Zombie/PurgeZones/PurgeZone.h"
 
+#include "GameAI_Zombie/Common/InventoryComponent.h"
 
 #include "Elements/Framework/TypedElementSorter.h"
 
@@ -43,27 +46,9 @@ void UStudentPerceptorDeWolfJorn::BeginPlay()
 		return;
 
 	BB = AIController->GetBlackboardComponent();
-}
-
-static AActor* GetClosest(const TArray<AActor*>& List, const FVector& Origin)
-{
-	AActor* Best = nullptr;
-	float BestDist = FLT_MAX;
-
-	for (AActor* A : List)
-	{
-		if (!A) continue;
-
-		float Dist = FVector::Dist(A->GetActorLocation(), Origin);
-
-		if (Dist < BestDist)
-		{
-			BestDist = Dist;
-			Best = A;
-		}
-	}
-
-	return Best;
+	
+	
+	Inventory = SurvivorPawn->GetComponentByClass<UInventoryComponent>();
 }
 
 void UStudentPerceptorDeWolfJorn::TickComponent(
@@ -99,6 +84,14 @@ void UStudentPerceptorDeWolfJorn::OnPerceptionUpdated(AActor* Actor, FAIStimulus
 			GetNextHouseToCheck();
 		}
 		return;
+	}
+	// If weapon
+	if (auto weapon = Cast<AWeapon>(Actor))
+	{
+		if (!SeenWeapons.Contains(weapon))
+		{
+			SeenWeapons.Add(weapon);
+		}
 	}
 }
 
@@ -136,6 +129,48 @@ void UStudentPerceptorDeWolfJorn::GetNextHouseToCheck()
 	}
 	
 	BB->SetValueAsObject("HouseTarget", closestHouse);
+}
+
+bool UStudentPerceptorDeWolfJorn::HasWeapon()
+{
+	auto inventoryItems = Inventory->GetInventory();
+	for (ABaseItem* item : inventoryItems)
+	{
+		if (auto weapon = Cast<AWeapon>(item))
+			return true;
+	}
+	return false;
+}
+
+void UStudentPerceptorDeWolfJorn::PickupItem(AActor* Actor)
+{
+	if (!IsValid(Actor)) return;
+	
+	auto item = Cast<ABaseItem>(Actor);
+	switch (item->GetItemType())
+	{
+	case EItemType::Food:
+		Inventory->GrabItem(static_cast<int>(EInventorySlot::FoodSlot), item);
+		break;
+		
+		
+	case EItemType::Medkit:
+		Inventory->GrabItem(static_cast<int>(EInventorySlot::MedkitSlot), item);
+		break;
+		
+		
+	case EItemType::Shotgun:
+	case EItemType::Pistol:
+		Inventory->GrabItem(static_cast<int>(EInventorySlot::WeaponSlot), item);
+		break;
+		
+		
+		
+	default:
+	case EItemType::Garbage:
+		// Useless-, why even grab it?
+		break;
+	}
 }
 
 void UStudentPerceptorDeWolfJorn::MarkHouseAsSeen()
